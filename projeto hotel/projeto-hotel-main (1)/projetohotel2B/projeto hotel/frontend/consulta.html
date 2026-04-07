@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <div>
+          <h2>🔍 consulta de Clientes</h2>
+            <!--🧠campo de busca com botão-->
+            <div>
+                <input type="text" id="campoBusca" placeholder="digite o nome do clente">
+                <button id="btnBusca">Buscar</button>
+            </div>
+
+            <!--tabela de resultados-->
+            <table>
+                <thead>
+                    <tr>
+                        <tr>ID</tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Açãoes</th>
+
+                    </tr>
+                </thead>
+                <!--o corpo da tabela sera preenchido dinamicamente via JS-->
+                <tbody id="tabelaresultados"></tbody>
+            </table>
+     </div>
+    <script scr="assets/js/main.js"></script>
+
+</body>
+</html>
