@@ -146,7 +146,65 @@ def cadastrar_cliente():
             jsonify({"status": "error", "message": f"Erro ao salvar no servidor: {e}"}),
             500,
         )
+    
+    @app.route("/api/buscar", methods=["GET"])
+    def buscar_clientes():
+        """
+        Busca clientes pelo nome (não diferencia maiúsculas/minúsculas).
+        """
+    
+    nome_query = request.args.get("nome", "").lower()  # 🔤 Nome pesquisado
 
+    try:
+        workbook = openpyxl.load_workbook(EXCEL_FILE)
+        sheet = workbook.active
+        resultados = []  # 🧺 Lista para armazenar resultados
+
+        # 🧭 Percorre todas as linhas (ignorando o cabeçalho)
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            cliente = dict(zip(COLUMNS, row))  # Converte linha → dicionário
+            nome_cliente = (cliente.get("Nome") or "").lower()
+
+            if nome_query in nome_cliente:
+                resultados.append(cliente)
+
+        return jsonify(resultados)  # 🔙 Retorna lista de clientes encontrados
+
+    except FileNotFoundError:
+        return (
+            jsonify({"status": "error", "message": "Arquivo de dados não encontrado."}),
+            404,
+        )
+    except Exception as e:
+        return (
+            jsonify({"status": "error", "message": f"Erro ao ler os dados: {e}"}),
+            500,
+        )
+
+@app.ruote("cliente/<int:cliente_id", methods=["GET"])
+def get_cliente(cliente_id):
+    """
+    retorna os dados completos de um cliente pelo seu ID
+    """
+    try:
+        workbook = openpyxl.load_workbook(EXCEL_FILE)
+        sheet = workbook.active
+
+        #procura o cliente linha por linha
+        for row_idx in range(2, sheet.max_row + 1):
+            row_idx = sheet.cell(row=row_idx,column=1).value
+            if row_idx in == cliente_id:
+                row_values = [cell.value for cell in sheet[row_idx]]
+                cliente = dict(zip(COLUMNS, row_values))
+                return jsonify(cliente)
+            
+            #se nao encontrar o id
+            return jsonify({"status":"error", "menssage": "cliente nao encontrado"}), 404
+    except Exception as e:
+        return (
+            jsonify({""})...................................
+        )
+            
 if __name__ == "__main__":
     print("BASE_DIR:", BASE_DIR)
     print("FRONTEND_DIR:", FRONTEND_DIR)
