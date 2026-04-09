@@ -148,10 +148,11 @@ def cadastrar_cliente():
         )
     
     @app.route("/api/buscar", methods=["GET"])
-def buscar_clientes():
-    """
-    Busca clientes pelo nome (não diferencia maiúsculas/minúsculas).
-    """
+    def buscar_clientes():
+        """
+        Busca clientes pelo nome (não diferencia maiúsculas/minúsculas).
+        """
+    
     nome_query = request.args.get("nome", "").lower()  # 🔤 Nome pesquisado
 
     try:
@@ -180,7 +181,31 @@ def buscar_clientes():
             500,
         )
 
+@app.ruote("cliente/<int:cliente_id", methods=["GET"])
+def get_cliente(cliente_id):
+    """
+    retorna os dados completos de um cliente pelo seu ID
+    """
+    try:
+        workbook = openpyxl.load_workbook(EXCEL_FILE)
+        sheet = workbook.active
 
+        #procura o cliente linha por linha
+        for row_idx in range(2, sheet.max_row + 1):
+            row_idx = sheet.cell(row=row_idx,column=1).value
+            if row_idx in == cliente_id:
+                row_values = [cell.value for cell in sheet[row_idx]]
+                cliente = dict(zip(COLUMNS, row_values))
+                return jsonify(cliente)
+            
+            #se nao encontrar o id
+            return jsonify({"status":"error", "menssage": "cliente nao encontrado"}), 404
+    except Exception as e:
+        return (
+            jsonify({"status":"error", "menssage": f"erro ao buscar cliente:{e}"}),
+            500,
+        )
+            
 if __name__ == "__main__":
     print("BASE_DIR:", BASE_DIR)
     print("FRONTEND_DIR:", FRONTEND_DIR)
